@@ -1,6 +1,6 @@
  import React , { useState , useEffect, useMemo,} from "react" 
 
-const Card = React.memo(({name , position , image , biography }) => {
+const Card = (({name , position , image , biography }) => {
   console.log("Card component re-rendered");
     return (
         <div className="single-politic" >
@@ -14,6 +14,8 @@ const Card = React.memo(({name , position , image , biography }) => {
         </div>
     )
 })
+
+const MemoizedCard = React.memo(Card)
  
  export default function App() {
     const [politcList, setPolitcList] = useState([])
@@ -26,7 +28,7 @@ const Card = React.memo(({name , position , image , biography }) => {
       const response= await fetch("http://localhost:5000/politicians")
       const data = await response.json()
       setPolitcList(data)
-      console.log("dati ricevuti" , data)
+      
       
     }catch (error) {
       console.error("Error nel recupero dei dati:", error);
@@ -66,7 +68,7 @@ const Card = React.memo(({name , position , image , biography }) => {
                 <ul>
                     {filteredPolitcList.map((politc) => (
                         <li className="single-politic" key={politc.id}>
-                            <Card
+                            <MemoizedCard
                                 name={politc.name}
                                 position={politc.position}
                                 image={politc.image}
@@ -79,18 +81,7 @@ const Card = React.memo(({name , position , image , biography }) => {
                 <p>Nessun politico trovato</p>
             )}
             </div>
-            <ul>
-                {politcList.map((politc) => (
-                    <li className="single-politic" key={politc.id}>
-                      <Card
-                        name={politc.name}
-                        position={politc.position}
-                        image={politc.image}
-                        biography={politc.biography}
-                      />
-                    </li>
-                ))}
-            </ul>
+            
         </div>
     )
 }
