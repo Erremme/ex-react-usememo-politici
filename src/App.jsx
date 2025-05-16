@@ -1,4 +1,19 @@
- import { useState , useEffect, useMemo } from "react" 
+ import React , { useState , useEffect, useMemo,} from "react" 
+
+const Card = React.memo(({name , position , image , biography }) => {
+  console.log("Card component re-rendered");
+    return (
+        <div className="single-politic" >
+            <h2>{name}</h2>
+            <div className="image-container">
+                <img src={image} alt={name} />
+            </div>
+            <p>Carica :{position}</p>
+            <h3>Biografia</h3>
+            <p>{biography}</p>
+        </div>
+    )
+})
  
  export default function App() {
     const [politcList, setPolitcList] = useState([])
@@ -11,6 +26,8 @@
       const response= await fetch("http://localhost:5000/politicians")
       const data = await response.json()
       setPolitcList(data)
+      console.log("dati ricevuti" , data)
+      
     }catch (error) {
       console.error("Error nel recupero dei dati:", error);
     }
@@ -31,12 +48,7 @@
     })
   } , [politcList, searchTerm])
 
-  console.log(filteredPolitcList)
-
-  
-  
-   console.log(politcList)
-   console.log(searchTerm)
+ 
 
     return (
         <div className="app">
@@ -54,13 +66,12 @@
                 <ul>
                     {filteredPolitcList.map((politc) => (
                         <li className="single-politic" key={politc.id}>
-                            <h2>{politc.name}</h2>
-                            <div className="image-container">
-                                <img src={politc.image} alt={politc.name} />
-                            </div>
-                            <p>Carica :{politc.position}</p>
-                            <h3>Biografia</h3>
-                            <p>{politc.biography}</p>
+                            <Card
+                                name={politc.name}
+                                position={politc.position}
+                                image={politc.image}
+                                biography={politc.biography}
+                      />
                         </li>
                     ))}
                 </ul>
@@ -71,15 +82,12 @@
             <ul>
                 {politcList.map((politc) => (
                     <li className="single-politic" key={politc.id}>
-                        <h2>{politc.name}</h2>
-                        <p>{politc.description}</p>
-                        <div className="image-container">
-                        
-                            <img src={politc.image} alt={politc.name} />
-                        </div>
-                        <p>Carica :{politc.position}</p>
-                        <h3>Biografia</h3>
-                        <p>{politc.biography}</p>
+                      <Card
+                        name={politc.name}
+                        position={politc.position}
+                        image={politc.image}
+                        biography={politc.biography}
+                      />
                     </li>
                 ))}
             </ul>
