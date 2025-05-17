@@ -20,6 +20,7 @@ const MemoizedCard = React.memo(Card)
  export default function App() {
     const [politcList, setPolitcList] = useState([])
     const [searchTerm, setSearchTerm] = useState("")
+    const [selectedPosition , setSelectedPosition] = useState("")
 
    
 
@@ -41,20 +42,35 @@ const MemoizedCard = React.memo(Card)
   }
   , [])
 
+  const positions = useMemo(() => {
+    const singlePosition = []
+    politcList.forEach((politic) => {
+        if(!singlePosition.includes(politic.position) ){
+             singlePosition.push(politic.position)
+        }
+       
+    })
+      return singlePosition
+  },[politcList])
+
+  console.log(positions)
+
   const filteredPolitcList = useMemo(() => {
     return politcList.filter((politic) => {
-        return(
-        politic.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        politic.biography.toLowerCase().includes(searchTerm.toLowerCase()) 
-        )
+        const isName = politic.name.toLowerCase().includes(searchTerm.toLowerCase())
+        const isBio = politic.biography.toLowerCase().includes(searchTerm.toLowerCase())
+        const isValidPosition = selectedPosition === "" || selectedPosition === politic.position
+        return (isBio || isBio) && isValidPosition
     })
-  } , [politcList, searchTerm])
+
+  } , [politcList, searchTerm, selectedPosition])
 
  
 
     return (
         <div className="app">
             <h1>Politicians</h1>
+            <div>
             <input type="text"
                 placeholder="Cerca un politico"
                 value={searchTerm}
@@ -63,6 +79,19 @@ const MemoizedCard = React.memo(Card)
                     
                 }}
             />
+            <select 
+            value={selectedPosition}
+            onChange={(e) =>
+                 setSelectedPosition(e.target.value)}
+            >
+                <option value="">Selezionare una Carica</option>
+                {positions.map((position , index) =>(
+                    <option key={index} value={position}>{position}</option>
+                ))}
+
+
+            </select>
+            </div>
              <div className="filtered-list">
             {filteredPolitcList.length > 0 ? (
                 <ul>
